@@ -1,0 +1,172 @@
+/* Miss Fajardose is now optimized through Next.js Google Fonts */
+@import "tailwindcss";
+
+/* Local fonts are now optimized through Next.js localFont() */
+
+:root {
+  /* Main colors */
+  --accentgray: #2f35578c;
+  --lightgray: #FBFBFC;
+  --slate: #2F3557;
+
+
+  /* Grays */
+  --gray-50: rgba(47, 53, 87, 0.05);
+  --gray-100: rgba(47, 53, 87, 0.08);
+  --gray-200: rgba(47, 53, 87, 0.1);
+  --gray-300: rgba(47, 53, 87, 0.20);
+  --gray-400: rgba(47, 53, 87, 0.40);
+  --gray-500: rgba(47, 53, 87, 0.55);
+
+  /* Component-specific colors */
+  --glass-bg: #C6C7D24D;
+  --glass-bg-hover: #A2A5BB4D;
+}
+
+@theme inline {
+  --color-accentgray: var(--accentgray);
+  --color-lightgray: var(--lightgray);
+  --color-slate: var(--slate);
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-bg-hover: var(--glass-bg-hover);
+  --color-glass: var(--glass-bg);
+  --font-family-sans: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-detail: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Text selection styles */
+::selection {
+  background: var(--slate);
+  color: var(--lightgray);
+}
+
+/* Prevent flash during navigation */
+html {
+  background: var(--lightgray);
+}
+
+body {
+  background: var(--lightgray);
+  color: var(--slate);
+  font-family: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* Prevent content shift during navigation */
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Site-wide grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+}
+
+/* Ensure mobile browsers respect overflow-x hidden */
+html {
+  overflow-x: hidden;
+}
+
+/* Additional mobile fixes for webkit browsers */
+@supports (-webkit-touch-callout: none) {
+  body {
+    position: relative;
+    overflow-x: hidden !important;
+  }
+  
+  /* Prevent horizontal scrolling on mobile webkit */
+  * {
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+  
+}
+
+
+/* Performance Optimizations */
+.animated-dash {
+  will-change: stroke-dashoffset;
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+/* Image fade-in animation for smoother loading */
+img {
+  animation: fadeInImage 0.3s ease-in;
+}
+
+/* Background image fade-in for hero section */
+.bg-fade-in {
+  animation: fadeInImage 0.3s ease-in;
+}
+
+/* Optimize scroll performance */
+.envelope-scrollbar {
+  contain: layout style paint;
+}
+
+/* Component-specific styles */
+
+/* WorkSection styles */
+.work-image-container-4-3 {
+  aspect-ratio: 4/3;
+}
+
+.work-image-container-16-9 {
+  aspect-ratio: 16/9;
+}
+
+.work-image-container-9-16 {
+  aspect-ratio: 9/16;
+}
+
+.work-image-container-1-1 {
+  aspect-ratio: 1/1;
+}
+
+.work-image-scale-85 {
+  transform: scale(0.85);
+}
+
+.work-image-scale-90 {
+  transform: scale(0.9);
+}
+
+.work-image-scale-80 {
+  transform: scale(0.8);
+}
+
+
+
+
+/* Font classes */
+.font-sans {
+  font-family: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-detail {
+  font-family: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Footer styles */
+.footer-signature {
+  font-family: var(--font-miss-fajardose), cursive;
+  font-style: normal;
+}
+
