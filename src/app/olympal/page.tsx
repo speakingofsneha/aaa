@@ -29,6 +29,7 @@ export default function OlympalCaseStudy() {
       {
         id: 'context',
         title: 'context',
+        section: 'project overview',
         content: (
           <>
             <Body large>
@@ -41,6 +42,7 @@ export default function OlympalCaseStudy() {
       {
         id: 'problem',
         title: 'the problem',
+        section: 'research',
         content: (
           <>
             <Body>
@@ -57,6 +59,7 @@ export default function OlympalCaseStudy() {
       {
         id: 'solution',
         title: 'the solution',
+        section: 'design',
         content: (
           <>
             <Body>
@@ -88,6 +91,7 @@ export default function OlympalCaseStudy() {
       {
         id: 'impact',
         title: 'impact',
+        section: 'results',
         content: (
           <>
             <Body>
@@ -108,6 +112,7 @@ export default function OlympalCaseStudy() {
       {
         id: 'reflection',
         title: 'reflection',
+        section: 'learnings',
         content: (
           <>
             <Body>

@@ -144,8 +144,30 @@
    TYPOGRAPHY - Exact from reframe
    ============================================ */
 
-.header {
+.section-label {
   font-family: var(--font-homemade-apple), cursive;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--color-accentgray);
+  margin-top: var(--spacing-heading-top);
+  margin-bottom: 0;
+  padding: 0;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  display: block;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+.section-label + .header {
+  margin-top: 1em !important;
+  margin-bottom: var(--spacing-heading-bottom);
+  padding: 0;
+  line-height: 1.1;
+}
+
+.header {
+  font-family: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.3rem;
   font-weight: 400;
   color: var(--slate);
@@ -153,10 +175,11 @@
   margin-bottom: var(--spacing-heading-bottom);
   letter-spacing: -0.02em;
   text-transform: lowercase;
+  line-height: 1.2;
 }
 
 .subheading {
-  font-family: var(--font-homemade-apple), cursive;
+  font-family: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.1rem;
   font-weight: 400;
   color: var(--color-accentgray);
@@ -167,6 +190,7 @@
 }
 
 .body {
+  font-family: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1rem;
   line-height: 1.7;
   color: var(--slate);
@@ -179,6 +203,7 @@
 }
 
 .body-large {
+  font-family: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--slate);

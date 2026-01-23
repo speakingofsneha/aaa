@@ -40,16 +40,7 @@ export default function Hero() {
           WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 15%, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0.4) 70%, rgba(0, 0, 0, 0.1) 85%, transparent 100%)',
           zIndex: 35
         }}
-      >
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E")`,
-            mixBlendMode: 'overlay',
-            opacity: 0.3
-          }}
-        ></div>
-      </div>
+      />
       
       {/* Full-width card stack and envelope container with gradient background */}
       <div 
@@ -67,16 +58,7 @@ export default function Hero() {
             maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 20%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0.8) 80%, black 100%)',
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 20%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0.8) 80%, black 100%)'
           }}
-        >
-          <div 
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E")`,
-              mixBlendMode: 'overlay',
-              opacity: 0.3
-            }}
-          ></div>
-        </div>
+        />
         <div className="max-w-6xl mx-auto relative z-20">
         </div>
       </div>

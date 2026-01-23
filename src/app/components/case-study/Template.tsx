@@ -30,6 +30,7 @@ interface CaseStudyConfig {
 interface CaseStudySection {
   id: string;
   title: string;
+  section?: string;
   content: React.ReactNode;
   screenshotImage?: {
     src: string;
@@ -145,6 +146,9 @@ export default function CaseStudyTemplate({ config }: CaseStudyTemplateProps) {
             >
               <div className="content">
                 <div className="text-container">
+                  {section.section && (
+                    <span className="section-label">{section.section}</span>
+                  )}
                   <h2 className="header">{section.title}</h2>
                   {section.content}
                 </div>

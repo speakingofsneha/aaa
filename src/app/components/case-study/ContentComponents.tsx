@@ -31,6 +31,11 @@ export function Emphasis({ children }: { children: React.ReactNode }) {
   return <span className="body-emphasis">{children}</span>;
 }
 
+/* Reusable section label */
+export function Section({ children }: { children: React.ReactNode }) {
+  return <span className="section-label">{children}</span>;
+}
+
 /* Reusable heading */
 export function Header({ 
   level = 2, 
