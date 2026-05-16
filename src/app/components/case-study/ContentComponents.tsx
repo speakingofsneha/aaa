@@ -7,7 +7,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 /* Reusable paragraph component */
 export function Body({ 
@@ -29,11 +28,6 @@ export function Body({
 /* Reusable emphasis text */
 export function Emphasis({ children }: { children: React.ReactNode }) {
   return <span className="body-emphasis">{children}</span>;
-}
-
-/* Reusable section label */
-export function Section({ children }: { children: React.ReactNode }) {
-  return <span className="section-label">{children}</span>;
 }
 
 /* Reusable heading */
@@ -61,28 +55,26 @@ export function ImageWithCaption({
 }: { 
   src: string; 
   alt: string; 
-  width: number; 
-  height: number; 
+  width?: number; 
+  height?: number; 
   caption?: string;
   narrow?: boolean;
   className?: string;
 }) {
   return (
-    <>
-      <div className={`${narrow ? 'image-container-narrow' : 'image-container'} ${className}`}>
-        <Image 
-          src={src} 
-          alt={alt} 
-          width={width} 
-          height={height} 
-          className="image"
-          loading="lazy"
-        />
-      </div>
+    <div className={`${narrow ? 'image-container-narrow' : 'image-container'} ${className}`}>
+      <img 
+        src={src} 
+        alt={alt} 
+        width={width} 
+        height={height} 
+        className="image"
+        loading="lazy"
+      />
       {caption && (
         <p className="image-caption">{caption}</p>
       )}
-    </>
+    </div>
   );
 }
 

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Miss_Fajardose, Caveat, Homemade_Apple } from "next/font/google";
+import { Geist, Geist_Mono, Miss_Fajardose, Caveat, Hedvig_Letters_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -85,11 +85,11 @@ const caveat = Caveat({
   preload: false, // Only used in blog
 });
 
-const homemadeApple = Homemade_Apple({
+const hedvigLettersSerif = Hedvig_Letters_Serif({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-homemade-apple",
+  variable: "--font-hedvig",
   preload: false,
 });
 
@@ -149,7 +149,7 @@ export default function RootLayout({
         }} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${untitledSans.variable} ${compagnon.variable} ${missFajardose.variable} ${caveat.variable} ${homemadeApple.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${untitledSans.variable} ${compagnon.variable} ${missFajardose.variable} ${caveat.variable} ${hedvigLettersSerif.variable} antialiased`}
         suppressHydrationWarning
       >
         <script

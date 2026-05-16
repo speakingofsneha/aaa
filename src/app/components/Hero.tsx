@@ -17,7 +17,7 @@ export default function Hero() {
         <div className="max-w-[600px] mx-auto text-start mb-16">
           <div className="text-[1rem] leading-relaxed font-detail text-white">
             <p>hello there! I&apos;m sneha.</p>
-            <p className="mt-3">I&apos;m a design engineer drawn to complex, ambigious problems that demand a high bar for craft to (hopefully) change our lives for the better ✦</p>
+            <p className="mt-3">I&apos;m a design engineer drawn to complex, ambigious problems that demand a high bar for craft & (hopefully) change our lives for the better ✦</p>
           </div>
         </div>
         

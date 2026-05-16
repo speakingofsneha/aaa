@@ -32,7 +32,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="pt-0 sm:pt-15 lg:pt-50 pb-17 sm:pb-6 px-4 sm:px-4 bg-lightgray relative">
+    <footer className="pt-6 sm:pt-5 lg:pt-16 pb-17 sm:pb-6 px-4 sm:px-4 bg-lightgray relative">
       <div className="max-w-7xl mx-auto">
         {/* Main signature area */}
         <div className="relative mb-6 ">
@@ -73,14 +73,14 @@ export default function Footer() {
            <div 
             className="text-[80px] sm:text-[120px] md:text-[212px] lg:text-[280px] text-[#898DA0] font-light leading-none md:text-left footer-signature"
           >
-            sneha vembu
+            sneha kumar
           </div> 
         </div>
 
         {/* Bottom footer text */}
         <div className="flex flex-row justify-between items-center text-xs font-mono text-accentgray uppercase" style={{ opacity: 0.8 }}>
           <div className="flex flex-row items-center justify-between gap-40">
-            <div><span className="text-slate"></span> handcoded by the beach </div>
+            <div><span className="text-slate"></span> handcoded w ♥︎</div>
           </div>
           <div className="text-center sm:text-right">
             <span>This site is constantly evolving, expect frequent nitpick commits </span>

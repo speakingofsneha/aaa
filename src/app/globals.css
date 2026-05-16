@@ -5,18 +5,18 @@
 
 :root {
   /* Main colors */
-  --accentgray: #2f35578c;
+  --accentgray: rgba(87, 87, 87, 0.55);
   --lightgray: #FBFBFC;
-  --slate: #2F3557;
+  --slate: rgb(87, 87, 87);
 
 
   /* Grays */
-  --gray-50: rgba(47, 53, 87, 0.05);
-  --gray-100: rgba(47, 53, 87, 0.08);
-  --gray-200: rgba(47, 53, 87, 0.1);
-  --gray-300: rgba(47, 53, 87, 0.20);
-  --gray-400: rgba(47, 53, 87, 0.40);
-  --gray-500: rgba(47, 53, 87, 0.55);
+  --gray-50: rgba(87, 87, 87, 0.05);
+  --gray-100: rgba(87, 87, 87, 0.08);
+  --gray-200: rgba(87, 87, 87, 0.1);
+  --gray-300: rgba(87, 87, 87, 0.20);
+  --gray-400: rgba(87, 87, 87, 0.40);
+  --gray-500: rgba(87, 87, 87, 0.55);
 
   /* Component-specific colors */
   --glass-bg: #C6C7D24D;
@@ -94,6 +94,7 @@ html {
 /* Image fade-in animation for smoother loading */
 img {
   animation: fadeInImage 0.3s ease-in;
+  border: 1px solid rgb(227, 227, 227);
 }
 
 /* Background image fade-in for hero section */

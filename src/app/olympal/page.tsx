@@ -27,9 +27,8 @@ export default function OlympalCaseStudy() {
     },
     sections: [
       {
-        id: 'context',
-        title: 'context',
-        section: 'project overview',
+        id: 'Context',
+        title: 'Context',
         content: (
           <>
             <Body large>
@@ -41,8 +40,7 @@ export default function OlympalCaseStudy() {
       },
       {
         id: 'problem',
-        title: 'the problem',
-        section: 'research',
+        title: 'The Problem',
         content: (
           <>
             <Body>
@@ -58,15 +56,14 @@ export default function OlympalCaseStudy() {
       },
       {
         id: 'solution',
-        title: 'the solution',
-        section: 'design',
+        title: 'The Solution',
         content: (
           <>
             <Body>
               We built Olympal as a comprehensive performance tracking platform that aggregates data 
-              from multiple sources and provides <Emphasis>actionable insights</Emphasis>.
+              from multiple sources and provides actionable insights
             </Body>
-            <Header level={3}>key features</Header>
+            <Header level={3}> Key Features</Header>
             <Body>
               The platform includes real-time tracking, historical analysis, and personalized recommendations 
               based on performance patterns.
@@ -90,8 +87,7 @@ export default function OlympalCaseStudy() {
       },
       {
         id: 'impact',
-        title: 'impact',
-        section: 'results',
+        title: 'Impact',
         content: (
           <>
             <Body>
@@ -99,11 +95,8 @@ export default function OlympalCaseStudy() {
               with <Emphasis>78% of users reporting improved performance tracking</Emphasis>.
             </Body>
             <ImageWithCaption
-              src="/work-images/olympal-feedback.webp"
-              alt="User feedback"
-              width={1200}
-              height={600}
-              narrow
+              src="https://placehold.co/900x600"
+              alt="Placeholder"
               caption="Feedback from Olympal users"
             />
           </>
@@ -111,8 +104,7 @@ export default function OlympalCaseStudy() {
       },
       {
         id: 'reflection',
-        title: 'reflection',
-        section: 'learnings',
+        title: 'Reflection',
         content: (
           <>
             <Body>

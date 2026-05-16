@@ -1,3 +1,5 @@
+note to self: done is better than perfect!!!
+
 [x] skeleton 
     [ ] favicon
     [ ] nav? 
@@ -11,15 +13,26 @@
 
 
 [ ] custom cursor (ipad cursor/sparkle/shooting star)
+    [ ] flying pigeon cursor https://www.figma.com/community/file/1532413441849083498  
 [ ] music w spotify api? 
-[ ] ocean footer ?  https://codepen.io/dev-kshitiz/pen/zYdMXXa
+[ ] ocean footer ?  https://codepen.io/dev-kshitiz/pen/zYdMXXa (or sydney skyline)
+    [ ] make a wish blowing dandelion https://sylvanlabs.com/ ascii style 
 [ ] feather drag and drop into snehaLM 😳? ew
 
 
 bugs: 
 - kolam sketch white bg flicker when refreshing 
+- fix arena link
 
 
 feedback: 
 - sunset overlay make darker 
 - change header to untitled serif in case study? 
+fun lil stuff:
+[x] rainbow scratchpad 
+[ ] tower of shame; library 
+[ ] chidam as a digital space  
+[ ] hobonichi ?idk 
+[ ] digital commonplace, something like https://masonjwang.com/bookshelf ? 
+[ ] a lil unoriginal, but build a boquet? 
+[ ] habit tracker where you punch through a day everyday you did something 
