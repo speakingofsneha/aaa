@@ -167,7 +167,7 @@ export default function WorkSection() {
   }, [filteredWork]);
 
   return (
-    <section id="portfolio-grid" className="bg-lightgray">
+    <section id="portfolio-grid" className="relative bg-lightgray">
 
       {/* Sticky category filter */}
       <div className="sticky top-0 z-50 flex justify-center gap-1 py-3 px-4 bg-lightgray/85 backdrop-blur-sm">
@@ -195,9 +195,9 @@ export default function WorkSection() {
           ref={el => { itemRefs.current[idx] = el; }}
           className="flex flex-col items-center justify-center h-screen overflow-hidden px-4"
         >
-          <div className="w-full max-w-5xl">
+          <div className="relative z-10 w-full max-w-5xl">
             <WorkCard title={work.title} />
-            <p className="mt-3 text-xs font-mono text-accentgray tracking-wide text-center">
+            <p className="mt-6 text-sm font-sans text-slate tracking-wide text-center">
               {work.description}
             </p>
           </div>

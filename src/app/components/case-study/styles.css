@@ -145,8 +145,8 @@
    ============================================ */
 
 .header {
-  font-family: var(--font-hedvig);
-  font-size: 1.12rem;
+  font-family: var(--font-homemade-apple), cursive;
+  font-size: 1.2rem;
   font-weight: 400;
   color: var(--slate);
   margin-top: var(--spacing-heading-top);

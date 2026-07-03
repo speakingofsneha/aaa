@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scratch Pad</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background-color: #f2ece0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: none;
+    user-select: none;
+    gap: 22px;
+    padding: 40px 20px;
+  }
+
+  @media (hover: none) {
+    #cursor { display: none; }
+    body { cursor: auto; }
+    .btn-reset, .info-btn, .export-menu button { cursor: pointer; }
+  }
+
+  /* ── Custom cursor ── */
+  #cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.6);
+    background: transparent;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    mix-blend-mode: difference;
+  }
+
+  /* ── Info button ── */
+  .info-btn {
+    position: fixed;
+    top: 18px; right: 20px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #d6cebc;
+    border: none;
+    cursor: none;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: #7a6f5e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: background 0.15s;
+  }
+  .info-btn:hover { background: #c8bfab; }
+
+  .info-tooltip {
+    position: fixed;
+    top: 50px; right: 18px;
+    background: #ede8db;
+    border: 1px solid #cdc5b3;
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+    color: #5a5145;
+    max-width: 224px;
+    line-height: 1.5;
+    z-index: 99;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .info-btn:hover + .info-tooltip,
+  .info-btn:focus + .info-tooltip { opacity: 1; transform: translateY(0); }
+
+  /* ── Card ── */
+  .card-wrapper {
+    position: relative;
+    transform: rotate(-1.8deg);
+    transform-origin: center center;
+  }
+  .card-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow:
+      2px 6px 18px rgba(0,0,0,0.22),
+      4px 14px 40px rgba(0,0,0,0.14),
+      1px 2px 4px rgba(0,0,0,0.18);
+  }
+
+  .scratch-container {
+    position: relative;
+    width: min(880px, 92vw);
+    aspect-ratio: 1.7 / 1;
+    z-index: 1;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  /* ── Mobile: portrait card ── */
+  @media (max-width: 540px) {
+    body { padding: 28px 16px; gap: 16px; }
+    .card-wrapper { transform: rotate(-1deg); }
+    .scratch-container {
+      width: min(92vw, 360px);
+      aspect-ratio: 3 / 4;
+    }
+  }
+
+  #reveal-canvas, #scratch-canvas, #shaving-canvas {
+    position: absolute;
+    inset: 0; width: 100%; height: 100%;
+    cursor: none;
+  }
+  #shaving-canvas { pointer-events: none; }
+  #scratch-canvas  { touch-action: none; }
+
+  /* ── Buttons ── */
+  .btn-reset {
+    width: 38px; height: 38px;
+    background: #d6cebc;
+    border: none; border-radius: 50%;
+    cursor: none;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+    outline: none; padding: 0;
+    flex-shrink: 0;
+  }
+  .btn-reset:hover  { background: #c8bfab; }
+  .btn-reset:active { background: #bab0a0; }
+  .controls { display: flex; justify-content: center; gap: 10px; align-items: center; }
+
+  /* ── Export menu ── */
+  .export-wrap { position: relative; }
+  .export-menu {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ede8db;
+    border: 1px solid #cdc5b3;
+    border-radius: 10px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 148px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(6px);
+    transition: opacity 0.18s, transform 0.18s;
+    z-index: 200;
+  }
+  .export-menu.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  .export-menu button {
+    background: none;
+    border: none;
+    cursor: none;
+    font-family: 'Caveat', cursive;
+    font-size: 1.05rem;
+    color: #5a5145;
+    text-align: left;
+    padding: 6px 10px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.12s;
+    white-space: nowrap;
+  }
+  .export-menu button:hover { background: #ddd6c8; }
+
+  /* ── Copy toast ── */
+  .copy-toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: #3d3730;
+    color: #f0ebe0;
+    font-family: 'Caveat', cursive;
+    font-size: 1.05rem;
+    padding: 8px 18px;
+    border-radius: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s, transform 0.22s;
+    z-index: 9999;
+    white-space: nowrap;
+  }
+  .copy-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── Shared view ── */
+  .shared-msg {
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    color: #6b6050;
+    text-align: center;
+    line-height: 1.55;
+  }
+  .shared-msg a {
+    color: #8a6f4e;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+
+<button class="info-btn" id="info-btn" tabindex="0">i</button>
+<div class="info-tooltip">
+  click and drag to scratch!<br><br>
+  i loved using these as a kid — the black shavings would always get under my nails, and my fingers lingered of that weird chemical smell.<br><br>
+  i wanted a smell-free version i could scratch during lectures bc hey- doodling helps with memory&nbsp;;)
+</div>
+
+<div class="card-wrapper">
+  <div class="scratch-container" id="scratch-container">
+    <canvas id="reveal-canvas"></canvas>
+    <canvas id="scratch-canvas"></canvas>
+    <canvas id="shaving-canvas"></canvas>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn-reset" id="reset-btn" title="Reset">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2L11 6h3.5V2.5l-1.3 1.3A6.98 6.98 0 0 0 8 1.5 6.5 6.5 0 1 0 14.5 8h-1z" fill="#7a6f5e"/>
+    </svg>
+  </button>
+
+  <div class="export-wrap" id="export-wrap">
+    <button class="btn-reset" id="export-btn" title="Export / Share">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <path d="M7.5 1v8M4.5 4 7.5 1l3 3M2.5 9.5v3a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-3" stroke="#7a6f5e" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="export-menu" id="export-menu">
+      <button id="dl-btn">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5l3 3 3-3M1.5 10.5v1a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-1" stroke="#7a6f5e" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        save as png
+      </button>
+      <button id="share-btn">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="10" cy="2.5" r="1.5" stroke="#7a6f5e" stroke-width="1.2"/><circle cx="10" cy="10.5" r="1.5" stroke="#7a6f5e" stroke-width="1.2"/><circle cx="3" cy="6.5" r="1.5" stroke="#7a6f5e" stroke-width="1.2"/><path d="M4.4 5.7 8.6 3.3M4.4 7.3l4.2 2.4" stroke="#7a6f5e" stroke-width="1.2" stroke-linecap="round"/></svg>
+        share link
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="copy-toast" id="copy-toast">link copied ✓</div>
+
+<script>
+(function () {
+  const container = document.getElementById('scratch-container');
+  const revealCv  = document.getElementById('reveal-canvas');
+  const scratchCv = document.getElementById('scratch-canvas');
+  const shavingCv = document.getElementById('shaving-canvas');
+  const rCtx      = revealCv.getContext('2d');
+  const sCtx      = scratchCv.getContext('2d');
+  const hvCtx     = shavingCv.getContext('2d');
+  const resetBtn  = document.getElementById('reset-btn');
+  const cursorEl  = document.getElementById('cursor');
+
+  const TILT_RAD = -1.8 * Math.PI / 180;
+
+  let isDrawing = false;
+  let lastX = null, lastY = null, prevX = null, prevY = null;
+  let velocityX = 0, velocityY = 0;
+  let audioCtx = null;
+  let shavings = [];
+  let noiseSource = null, bandpass = null, peaking = null, masterGain = null;
+  let isAudioOn = false, modRaf = null, shavingRaf = null;
+
+  // ── CURSOR
+  window.addEventListener('mousemove', e => {
+    cursorEl.style.left = e.clientX + 'px';
+    cursorEl.style.top  = e.clientY + 'px';
+  });
+
+  // ── COORDS
+  function getLocalPos(cx, cy) {
+    const rect = container.getBoundingClientRect();
+    // rect is the AABB (slightly larger than the canvas due to rotation).
+    // Use offsetWidth/offsetHeight for the true canvas dimensions so the
+    // re-centering offset is accurate and there's no position drift.
+    const cw = container.offsetWidth, ch = container.offsetHeight;
+    const dx = cx - (rect.left + rect.width  / 2);
+    const dy = cy - (rect.top  + rect.height / 2);
+    const cos = Math.cos(-TILT_RAD), sin = Math.sin(-TILT_RAD);
+    return {
+      x: dx*cos - dy*sin + cw / 2,
+      y: dx*sin + dy*cos + ch / 2,
+    };
+  }
+  function getPos(e) {
+    const s = e.touches ? e.touches[0] : e;
+    return getLocalPos(s.clientX, s.clientY);
+  }
+
+  // ── REVEAL
+  function buildReveal(w, h) {
+    revealCv.width = w; revealCv.height = h;
+    const base = rCtx.createLinearGradient(0,0,w,h);
+    ['#ff0040','#ff3800','#ff9000','#ffe000','#3aff50','#00ffc8','#0088ff','#7800ff','#ff00bb']
+      .forEach((c,i,a) => base.addColorStop(i/(a.length-1), c));
+    rCtx.fillStyle = base; rCtx.fillRect(0,0,w,h);
+
+    const cross = rCtx.createLinearGradient(w,0,0,h);
+    cross.addColorStop(0.0,'rgba(255,220,0,0.30)');
+    cross.addColorStop(0.4,'rgba(0,255,180,0.18)');
+    cross.addColorStop(0.7,'rgba(180,0,255,0.22)');
+    cross.addColorStop(1.0,'rgba(255,40,0,0.28)');
+    rCtx.fillStyle = cross; rCtx.fillRect(0,0,w,h);
+
+    [{cx:.12,cy:.22,rr:.48,col:'rgba(255,0,100,0.48)'},{cx:.88,cy:.18,rr:.42,col:'rgba(255,210,0,0.42)'},
+     {cx:.50,cy:.82,rr:.52,col:'rgba(0,200,255,0.40)'},{cx:.80,cy:.78,rr:.40,col:'rgba(90,0,255,0.38)'},
+     {cx:.18,cy:.78,rr:.38,col:'rgba(0,255,80,0.36)' },{cx:.50,cy:.40,rr:.30,col:'rgba(255,255,255,0.12)'}]
+    .forEach(p => {
+      const g = rCtx.createRadialGradient(p.cx*w,p.cy*h,0,p.cx*w,p.cy*h,p.rr*Math.max(w,h));
+      g.addColorStop(0, p.col);
+      g.addColorStop(.55, p.col.replace(/[\d.]+\)$/,'0.07)'));
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      rCtx.fillStyle=g; rCtx.fillRect(0,0,w,h);
+    });
+
+    for (let s=0;s<10;s++) {
+      const x0=(Math.random()*1.6-.3)*w, ang=-.22+Math.random()*.44, sw=6+Math.random()*60;
+      rCtx.save(); rCtx.translate(x0,h*.5); rCtx.rotate(ang);
+      const sg=rCtx.createLinearGradient(-sw/2,0,sw/2,0);
+      sg.addColorStop(0,'rgba(255,255,255,0)');
+      sg.addColorStop(.5,`rgba(255,255,255,${.04+Math.random()*.13})`);
+      sg.addColorStop(1,'rgba(255,255,255,0)');
+      rCtx.fillStyle=sg; rCtx.fillRect(-sw/2,-h*1.5,sw,h*3); rCtx.restore();
+    }
+
+    const gc=document.createElement('canvas'); gc.width=gc.height=256;
+    const gx=gc.getContext('2d'), id=gx.createImageData(256,256);
+    for (let i=0;i<id.data.length;i+=4){
+      const v=Math.random();
+      id.data[i]=255*v*.88+22; id.data[i+1]=255*v*.82; id.data[i+2]=255*v*.96;
+      id.data[i+3]=Math.random()*40+5;
+    }
+    gx.putImageData(id,0,0);
+    rCtx.fillStyle=rCtx.createPattern(gc,'repeat'); rCtx.fillRect(0,0,w,h);
+
+    const vig=rCtx.createRadialGradient(w/2,h/2,Math.min(w,h)*.18,w/2,h/2,Math.max(w,h)*.74);
+    vig.addColorStop(0,'rgba(255,255,255,0.07)'); vig.addColorStop(1,'rgba(0,0,0,0.26)');
+    rCtx.fillStyle=vig; rCtx.fillRect(0,0,w,h);
+  }
+
+  // ── INIT
+  function initCanvas() {
+    const rect = container.getBoundingClientRect();
+    const dpr  = window.devicePixelRatio || 1;
+    const w = rect.width, h = rect.height;
+
+    buildReveal(w*dpr, h*dpr);
+    revealCv.style.width = w+'px'; revealCv.style.height = h+'px';
+
+    [scratchCv, shavingCv].forEach(cv => {
+      cv.width=w*dpr; cv.height=h*dpr;
+      cv.style.width=w+'px'; cv.style.height=h+'px';
+    });
+    sCtx.setTransform(1,0,0,1,0,0); sCtx.scale(dpr,dpr);
+    hvCtx.setTransform(1,0,0,1,0,0); hvCtx.scale(dpr,dpr);
+
+    drawScratch(w, h);
+    shavings = []; hvCtx.clearRect(0,0,w,h);
+  }
+
+  // ── SCRATCH LAYER with paper texture
+  function drawScratch(w, h) {
+    sCtx.clearRect(0,0,w,h);
+
+    // base dark
+    sCtx.fillStyle = '#1e1e21';
+    sCtx.fillRect(0,0,w,h);
+
+    // dark grain
+    const gc=document.createElement('canvas'); gc.width=gc.height=180;
+    const gx=gc.getContext('2d'), id=gx.createImageData(180,180);
+    for (let i=0;i<id.data.length;i+=4){
+      const v=Math.random()*65;
+      id.data[i]=id.data[i+1]=id.data[i+2]=v;
+      id.data[i+3]=Math.random()*52+8;
+    }
+    gx.putImageData(id,0,0);
+    sCtx.fillStyle=sCtx.createPattern(gc,'repeat'); sCtx.fillRect(0,0,w,h);
+
+    // horizontal paper fibres
+    const fc=document.createElement('canvas'); fc.width=w; fc.height=h;
+    const fx=fc.getContext('2d');
+    for (let i=0, n=Math.floor(h*0.85); i<n; i++){
+      const y=Math.random()*h, x0=Math.random()*w;
+      const len=20+Math.random()*100;
+      const a=0.012+Math.random()*0.038;
+      fx.strokeStyle=Math.random()>.5 ? `rgba(175,165,148,${a})` : `rgba(8,8,8,${a*.55})`;
+      fx.lineWidth=0.3+Math.random()*.7;
+      fx.beginPath(); fx.moveTo(x0,y);
+      fx.lineTo(x0+len*(Math.random()>.5?1:-1), y+(Math.random()-.5)*1.4);
+      fx.stroke();
+    }
+    sCtx.drawImage(fc,0,0);
+
+    // centre vignette
+    const ev=sCtx.createRadialGradient(w/2,h/2,Math.min(w,h)*.28,w/2,h/2,Math.max(w,h)*.78);
+    ev.addColorStop(0,'rgba(0,0,0,0)'); ev.addColorStop(1,'rgba(0,0,0,0.42)');
+    sCtx.fillStyle=ev; sCtx.fillRect(0,0,w,h);
+
+    // paper edge treatment
+    paperEdge(w, h);
+  }
+
+  function paperEdge(w, h) {
+    const rn = () => Math.random() - 0.5;
+
+    // inset shadow rings — simulate paper depth at the edges
+    [
+      { inset: 24, alpha: 0.16, blur: 20 },
+      { inset: 11, alpha: 0.24, blur: 10 },
+      { inset:  4, alpha: 0.30, blur:  5 },
+    ].forEach(({ inset, alpha, blur }) => {
+      sCtx.save();
+      // draw a filled rect covering just the border band
+      const grad = [ // top, right, bottom, left inset gradient bands
+        { g: sCtx.createLinearGradient(0,0,0,inset*2.5), a:[0,inset*2.5] },
+      ];
+      // simpler: just paint 4 edge rectangles with gradient
+      // top band
+      let g = sCtx.createLinearGradient(0,0,0,inset*2.5);
+      g.addColorStop(0,`rgba(0,0,0,${alpha})`); g.addColorStop(1,'rgba(0,0,0,0)');
+      sCtx.fillStyle=g; sCtx.fillRect(0,0,w,inset*2.5);
+      // bottom band
+      g=sCtx.createLinearGradient(0,h,0,h-inset*2.5);
+      g.addColorStop(0,`rgba(0,0,0,${alpha})`); g.addColorStop(1,'rgba(0,0,0,0)');
+      sCtx.fillStyle=g; sCtx.fillRect(0,h-inset*2.5,w,inset*2.5);
+      // left band
+      g=sCtx.createLinearGradient(0,0,inset*2.5,0);
+      g.addColorStop(0,`rgba(0,0,0,${alpha})`); g.addColorStop(1,'rgba(0,0,0,0)');
+      sCtx.fillStyle=g; sCtx.fillRect(0,0,inset*2.5,h);
+      // right band
+      g=sCtx.createLinearGradient(w,0,w-inset*2.5,0);
+      g.addColorStop(0,`rgba(0,0,0,${alpha})`); g.addColorStop(1,'rgba(0,0,0,0)');
+      sCtx.fillStyle=g; sCtx.fillRect(w-inset*2.5,0,inset*2.5,h);
+      sCtx.restore();
+    });
+
+    // ragged bright edge highlights — paper fibres catching light
+    const N = 240;
+    sCtx.save();
+
+    // top
+    sCtx.beginPath(); sCtx.moveTo(0,0);
+    for (let i=0;i<=N;i++) sCtx.lineTo(w/N*i, 1.5+Math.abs(rn())*5+Math.abs(rn())*3);
+    sCtx.lineTo(w,0); sCtx.closePath();
+    let eg=sCtx.createLinearGradient(0,0,0,10);
+    eg.addColorStop(0,'rgba(255,255,255,0.10)'); eg.addColorStop(1,'rgba(255,255,255,0)');
+    sCtx.fillStyle=eg; sCtx.fill();
+
+    // bottom
+    sCtx.beginPath(); sCtx.moveTo(0,h);
+    for (let i=0;i<=N;i++) sCtx.lineTo(w/N*i, h-1.5-Math.abs(rn())*5-Math.abs(rn())*3);
+    sCtx.lineTo(w,h); sCtx.closePath();
+    eg=sCtx.createLinearGradient(0,h-10,0,h);
+    eg.addColorStop(0,'rgba(255,255,255,0)'); eg.addColorStop(1,'rgba(255,255,255,0.08)');
+    sCtx.fillStyle=eg; sCtx.fill();
+
+    // left
+    sCtx.beginPath(); sCtx.moveTo(0,0);
+    for (let i=0;i<=N;i++) sCtx.lineTo(1.5+Math.abs(rn())*5+Math.abs(rn())*3, h/N*i);
+    sCtx.lineTo(0,h); sCtx.closePath();
+    eg=sCtx.createLinearGradient(0,0,10,0);
+    eg.addColorStop(0,'rgba(255,255,255,0.08)'); eg.addColorStop(1,'rgba(255,255,255,0)');
+    sCtx.fillStyle=eg; sCtx.fill();
+
+    // right
+    sCtx.beginPath(); sCtx.moveTo(w,0);
+    for (let i=0;i<=N;i++) sCtx.lineTo(w-1.5-Math.abs(rn())*5-Math.abs(rn())*3, h/N*i);
+    sCtx.lineTo(w,h); sCtx.closePath();
+    eg=sCtx.createLinearGradient(w-10,0,w,0);
+    eg.addColorStop(0,'rgba(255,255,255,0)'); eg.addColorStop(1,'rgba(255,255,255,0.07)');
+    sCtx.fillStyle=eg; sCtx.fill();
+
+    sCtx.restore();
+
+    // micro fringe fibres growing in from all four edges
+    sCtx.save();
+    for (let f=0;f<180;f++){
+      const side=f%4, off=Math.random();
+      let x1,y1,x2,y2;
+      const len=3+Math.random()*16;
+      const a=0.035+Math.random()*0.10;
+      sCtx.strokeStyle=Math.random()>.4
+        ? `rgba(210,200,185,${a})`
+        : `rgba(4,4,4,${a*.7})`;
+      sCtx.lineWidth=0.25+Math.random()*.85;
+      if (side===0){x1=off*w;y1=0;   x2=x1+rn()*3;y2=len;}
+      else if(side===1){x1=off*w;y1=h;   x2=x1+rn()*3;y2=h-len;}
+      else if(side===2){x1=0;   y1=off*h;x2=len;       y2=y1+rn()*3;}
+      else             {x1=w;   y1=off*h;x2=w-len;     y2=y1+rn()*3;}
+      const mx=(x1+x2)/2+rn()*2, my=(y1+y2)/2+rn()*2;
+      sCtx.beginPath(); sCtx.moveTo(x1,y1);
+      sCtx.quadraticCurveTo(mx,my,x2,y2);
+      sCtx.stroke();
+    }
+    sCtx.restore();
+
+    // rough paper corners — extra shadow, micro torn bites, dense fibres
+    sCtx.save();
+    [[0,0,1,1],[w,0,-1,1],[0,h,1,-1],[w,h,-1,-1]].forEach(([cx,cy,sx,sy]) => {
+      const zone = 26 + Math.random()*10;
+
+      // denser corner shadow
+      const cg = sCtx.createRadialGradient(cx,cy,0,cx,cy,zone*2.4);
+      cg.addColorStop(0,'rgba(0,0,0,0.52)');
+      cg.addColorStop(.45,'rgba(0,0,0,0.18)');
+      cg.addColorStop(1,'rgba(0,0,0,0)');
+      sCtx.fillStyle = cg;
+      sCtx.fillRect(sx>0?cx:cx-zone*2.4, sy>0?cy:cy-zone*2.4, zone*2.4, zone*2.4);
+
+      // light-catching fibres radiating from the corner
+      for (let f=0; f<30; f++) {
+        const t = Math.random();
+        const onX = Math.random() > 0.5;
+        const x1 = onX ? cx+sx*t*zone : cx+sx*Math.random()*5;
+        const y1 = onX ? cy+sy*Math.random()*5 : cy+sy*t*zone;
+        const len = 2 + Math.random()*11;
+        const a = 0.05 + Math.random()*0.18;
+        sCtx.strokeStyle = Math.random()>.35
+          ? `rgba(218,208,190,${a})`
+          : `rgba(4,4,4,${a*.7})`;
+        sCtx.lineWidth = 0.2 + Math.random()*0.95;
+        const ang = Math.atan2(sy,sx) + (Math.random()-0.5)*1.6;
+        const mx2 = x1+Math.cos(ang)*len*.5+rn()*2;
+        const my2 = y1+Math.sin(ang)*len*.5+rn()*2;
+        sCtx.beginPath(); sCtx.moveTo(x1,y1);
+        sCtx.quadraticCurveTo(mx2,my2, x1+Math.cos(ang)*len, y1+Math.sin(ang)*len);
+        sCtx.stroke();
+      }
+    });
+    sCtx.restore();
+  }
+
+  // ── SCRATCH INTERACTION
+  function scratch(x, y) {
+    sCtx.globalCompositeOperation = 'destination-out';
+    const r = 1.5 + Math.random() * 1.5;
+    if (lastX !== null) {
+      const dist=Math.hypot(x-lastX,y-lastY);
+      const steps=Math.max(1,Math.floor(dist/1.0));
+      for (let i=0;i<=steps;i++){
+        const t=i/steps;
+        const px=lastX+(x-lastX)*t, py=lastY+(y-lastY)*t;
+        scratchBlob(px,py,r);
+        if (Math.random()<.22) spawnShaving(px,py,velocityX,velocityY);
+      }
+    } else {
+      scratchBlob(x,y,r);
+    }
+    if (prevX!==null){velocityX=x-prevX;velocityY=y-prevY;}
+    prevX=x;prevY=y;lastX=x;lastY=y;
+    sCtx.globalCompositeOperation='source-over';
+  }
+
+  function scratchBlob(x,y,r){
+    sCtx.beginPath();
+    const pts=6+Math.floor(Math.random()*3);
+    for(let i=0;i<=pts;i++){
+      const ang=(i/pts)*Math.PI*2, j=r*(.55+Math.random()*.9), sy=.7+Math.random()*.5;
+      const px=x+Math.cos(ang)*j, py=y+Math.sin(ang)*j*sy;
+      i===0?sCtx.moveTo(px,py):sCtx.lineTo(px,py);
+    }
+    sCtx.closePath();
+    const g=sCtx.createRadialGradient(x,y,0,x,y,r*1.8);
+    g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(.45,'rgba(0,0,0,0.96)');
+    g.addColorStop(.85,'rgba(0,0,0,0.28)'); g.addColorStop(1,'rgba(0,0,0,0)');
+    sCtx.fillStyle=g; sCtx.fill();
+  }
+
+  // ── SHAVINGS
+  function spawnShaving(x,y,vx,vy){
+    const spd=Math.hypot(vx,vy), count=1+Math.floor(Math.random()*2);
+    for(let i=0;i<count;i++){
+      const angle=Math.atan2(vy,vx)+Math.PI+(Math.random()-.5)*1.8;
+      const s=.3+Math.random()*Math.max(.4,spd*.12);
+      shavings.push({x,y,vx:Math.cos(angle)*s,vy:Math.sin(angle)*s-.25,
+        life:1,decay:.04+Math.random()*.06,rot:Math.random()*Math.PI*2,
+        rotV:(Math.random()-.5)*.28,w:.8+Math.random()*2,h:.3+Math.random()*.7});
+    }
+  }
+
+  function tickShavings(){
+    const rect=container.getBoundingClientRect();
+    hvCtx.clearRect(0,0,rect.width,rect.height);
+    for(let i=shavings.length-1;i>=0;i--){
+      const p=shavings[i];
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.055;p.vx*=.97;p.rot+=p.rotV;p.life-=p.decay;
+      if(p.life<=0){shavings.splice(i,1);continue;}
+      hvCtx.save();
+      hvCtx.globalAlpha=Math.min(1,p.life*1.6)*.5;
+      hvCtx.translate(p.x,p.y);hvCtx.rotate(p.rot);
+      hvCtx.fillStyle=`rgba(${8+Math.floor(Math.random()*18)},${8+Math.floor(Math.random()*12)},${8+Math.floor(Math.random()*18)},1)`;
+      hvCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      hvCtx.restore();
+    }
+    if(shavings.length>0||isDrawing) shavingRaf=requestAnimationFrame(tickShavings);
+    else shavingRaf=null;
+  }
+  function ensureShavingLoop(){if(!shavingRaf) shavingRaf=requestAnimationFrame(tickShavings);}
+
+  // ── AUDIO
+  function initAudio(){if(audioCtx)return;audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+  function startScratchAudio(){
+    if(!audioCtx||isAudioOn)return; isAudioOn=true;
+    const sr=audioCtx.sampleRate,buf=audioCtx.createBuffer(1,sr*2,sr),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    noiseSource=audioCtx.createBufferSource(); noiseSource.buffer=buf; noiseSource.loop=true;
+    const hp=audioCtx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=1400;
+    bandpass=audioCtx.createBiquadFilter(); bandpass.type='bandpass'; bandpass.frequency.value=2800; bandpass.Q.value=.65;
+    peaking=audioCtx.createBiquadFilter(); peaking.type='peaking'; peaking.frequency.value=5500; peaking.Q.value=1.6; peaking.gain.value=7;
+    const pk2=audioCtx.createBiquadFilter(); pk2.type='peaking'; pk2.frequency.value=2000; pk2.Q.value=2.2; pk2.gain.value=4;
+    masterGain=audioCtx.createGain(); masterGain.gain.setValueAtTime(0,audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(.014,audioCtx.currentTime+.04);
+    noiseSource.connect(hp);hp.connect(bandpass);bandpass.connect(pk2);pk2.connect(peaking);peaking.connect(masterGain);masterGain.connect(audioCtx.destination);
+    noiseSource.start(); modulateAudio();
+  }
+  function modulateAudio(){
+    if(!isAudioOn)return; modRaf=requestAnimationFrame(modulateAudio);
+    if(!masterGain||!bandpass||!peaking)return;
+    const spd=Math.hypot(velocityX,velocityY);
+    masterGain.gain.setTargetAtTime(Math.min(.015,.001+spd*.002),audioCtx.currentTime,.025);
+    bandpass.frequency.setTargetAtTime(Math.min(2400+spd*70+Math.random()*150,6000),audioCtx.currentTime,.035);
+    peaking.frequency.setTargetAtTime(5000+Math.random()*900,audioCtx.currentTime,.06);
+  }
+  function stopScratchAudio(){
+    if(!isAudioOn)return; isAudioOn=false; cancelAnimationFrame(modRaf);
+    if(masterGain) masterGain.gain.setTargetAtTime(0,audioCtx.currentTime,.05);
+    setTimeout(()=>{try{noiseSource&&noiseSource.stop();noiseSource&&noiseSource.disconnect();}catch(e){}
+      noiseSource=null;bandpass=null;peaking=null;masterGain=null;},100);
+  }
+
+  // ── EVENTS
+  function onStart(e){
+    e.preventDefault(); initAudio(); isDrawing=true;
+    lastX=lastY=prevX=prevY=null; velocityX=velocityY=0;
+    const p=getPos(e); scratch(p.x,p.y); startScratchAudio(); ensureShavingLoop();
+  }
+  function onMove(e){
+    if(!isDrawing)return; e.preventDefault();
+    const p=getPos(e); scratch(p.x,p.y); ensureShavingLoop();
+  }
+  function onEnd(){
+    if(!isDrawing)return; isDrawing=false;
+    lastX=lastY=prevX=prevY=null; velocityX=velocityY=0; stopScratchAudio();
+  }
+
+  scratchCv.addEventListener('mousedown',onStart);
+  window.addEventListener('mousemove',onMove);
+  window.addEventListener('mouseup',onEnd);
+  scratchCv.addEventListener('touchstart',onStart,{passive:false});
+  scratchCv.addEventListener('touchmove',onMove,{passive:false});
+  scratchCv.addEventListener('touchend',onEnd);
+
+  resetBtn.addEventListener('click',()=>{
+    stopScratchAudio();
+    if(shavingRaf){cancelAnimationFrame(shavingRaf);shavingRaf=null;}
+    initCanvas();
+  });
+
+  window.addEventListener('resize',()=>{clearTimeout(window._rt);window._rt=setTimeout(initCanvas,200);});
+
+  // ── COMPOSITE (merges reveal + scratch layers into one canvas)
+  function buildComposite() {
+    const tmp = document.createElement('canvas');
+    tmp.width  = revealCv.width;
+    tmp.height = revealCv.height;
+    const ctx = tmp.getContext('2d');
+    ctx.drawImage(revealCv, 0, 0);
+    ctx.drawImage(scratchCv, 0, 0);
+    return tmp;
+  }
+
+  // ── DOWNLOAD PNG  (tilted card on background, with shadow)
+  function downloadPNG() {
+    const cw  = container.offsetWidth;
+    const ch  = container.offsetHeight;
+    const dpr = window.devicePixelRatio || 1;
+    const pad = 88; // room for shadow + tilt bleed
+
+    const out = document.createElement('canvas');
+    out.width  = Math.round((cw + pad * 2) * dpr);
+    out.height = Math.round((ch + pad * 2) * dpr);
+    const ctx  = out.getContext('2d');
+
+    // ── background (same cream as page)
+    ctx.fillStyle = '#f2ece0';
+    ctx.fillRect(0, 0, out.width, out.height);
+
+    // subtle paper noise
+    const nc = document.createElement('canvas'); nc.width = nc.height = 256;
+    const nx = nc.getContext('2d'), nd = nx.createImageData(256, 256);
+    for (let i = 0; i < nd.data.length; i += 4) {
+      const v = Math.random() * 255;
+      nd.data[i] = nd.data[i+1] = nd.data[i+2] = v;
+      nd.data[i+3] = Math.floor(Math.random() * 11 + 2);
+    }
+    nx.putImageData(nd, 0, 0);
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.fillStyle = ctx.createPattern(nc, 'repeat');
+    ctx.fillRect(0, 0, cw + pad * 2, ch + pad * 2);
+    ctx.restore();
+
+    // work in CSS-pixel space
+    ctx.save();
+    ctx.scale(dpr, dpr);
+
+    const cx = pad + cw / 2, cy = pad + ch / 2;
+
+    // ── shadow pass 1 — large diffuse
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(TILT_RAD);
+    ctx.shadowColor = 'rgba(0,0,0,0.14)';
+    ctx.shadowBlur = 44; ctx.shadowOffsetX = 4; ctx.shadowOffsetY = 14;
+    ctx.fillStyle = '#1e1e21';
+    ctx.beginPath(); ctx.roundRect(-cw/2, -ch/2, cw, ch, 4); ctx.fill();
+    ctx.restore();
+
+    // ── shadow pass 2 — tighter crisp shadow
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(TILT_RAD);
+    ctx.shadowColor = 'rgba(0,0,0,0.22)';
+    ctx.shadowBlur = 18; ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 6;
+    ctx.fillStyle = '#1e1e21';
+    ctx.beginPath(); ctx.roundRect(-cw/2, -ch/2, cw, ch, 4); ctx.fill();
+    ctx.restore();
+
+    // ── card image (clipped to rounded rect)
+    const comp = buildComposite();
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(TILT_RAD);
+    ctx.beginPath(); ctx.roundRect(-cw/2, -ch/2, cw, ch, 4); ctx.clip();
+    ctx.drawImage(comp, -cw/2, -ch/2, cw, ch);
+    ctx.restore();
+
+    ctx.restore(); // end DPR scale
+
+    out.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'scratch-pad.png';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }, 'image/png');
+
+    showToast('saved as png ✓');
+  }
+
+  // ── SHARE LINK
+  function shareLink() {
+    const comp = buildComposite();
+    // Scale down for a compact URL (~400px wide)
+    const scale = Math.min(1, 400 / comp.width);
+    const sw = Math.round(comp.width * scale), sh = Math.round(comp.height * scale);
+    const small = document.createElement('canvas');
+    small.width = sw; small.height = sh;
+    small.getContext('2d').drawImage(comp, 0, 0, sw, sh);
+    const dataURL = small.toDataURL('image/jpeg', 0.55);
+    const hash = '#s=' + encodeURIComponent(dataURL);
+    const url   = location.href.split('#')[0] + hash;
+    const text  = url;
+    navigator.clipboard.writeText(text).then(() => showToast('link copied ✓')).catch(() => showToast('copy failed'));
+  }
+
+  // ── TOAST
+  const toastEl = document.getElementById('copy-toast');
+  let toastTimer;
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+  }
+
+  // ── EXPORT MENU TOGGLE
+  const exportBtn  = document.getElementById('export-btn');
+  const exportMenu = document.getElementById('export-menu');
+  exportBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    exportMenu.classList.toggle('open');
+  });
+  document.addEventListener('click', () => exportMenu.classList.remove('open'));
+  exportMenu.addEventListener('click', e => e.stopPropagation());
+  document.getElementById('dl-btn').addEventListener('click',    () => { exportMenu.classList.remove('open'); downloadPNG(); });
+  document.getElementById('share-btn').addEventListener('click', () => { exportMenu.classList.remove('open'); shareLink(); });
+
+  // ── SHARED VIEW (render when URL contains #s=…)
+  (function checkSharedView() {
+    const hash = location.hash;
+    if (!hash.startsWith('#s=')) return;
+    const dataURL = decodeURIComponent(hash.slice(3));
+
+    // Hide interactive controls and info
+    document.querySelector('.controls').style.display = 'none';
+    document.getElementById('info-btn').style.display = 'none';
+    document.querySelector('.info-tooltip').style.display = 'none';
+
+    // Replace canvas stack with the image
+    const img = new Image();
+    img.src = dataURL;
+    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+    container.innerHTML = '';
+    container.appendChild(img);
+
+    // Show message below card
+    const msg = document.createElement('p');
+    msg.className = 'shared-msg';
+    msg.innerHTML = 'hey i scratched a little something &lt;3<br><a href="' +
+      location.href.split('#')[0] + '">scratch your own →</a>';
+    document.querySelector('.card-wrapper').insertAdjacentElement('afterend', msg);
+  })();
+
+  initCanvas();
+})();
+</script>
+</body>
+</html>

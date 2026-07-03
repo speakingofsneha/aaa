@@ -1,22 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
-// Helper function to get ordinal suffix (1st, 2nd, 3rd, 4th, etc.)
-function getOrdinalSuffix(num: number): string {
-  const j = num % 10;
-  const k = num % 100;
-  if (j === 1 && k !== 11) {
-    return 'ST';
-  }
-  if (j === 2 && k !== 12) {
-    return 'ND';
-  }
-  if (j === 3 && k !== 13) {
-    return 'RD';
-  }
-  return 'TH';
-}
+import './goose-footer.css';
 
 export default function Footer() {
   const [emailCopied, setEmailCopied] = useState(false);
@@ -32,58 +17,67 @@ export default function Footer() {
   };
 
   return (
-    <footer className="pt-6 sm:pt-5 lg:pt-16 pb-17 sm:pb-6 px-4 sm:px-4 bg-lightgray relative">
-      <div className="max-w-7xl mx-auto">
-        {/* Main signature area */}
-        <div className="relative mb-6 ">
-          {/* Contact links - responsive positioning */}
-          <div className="sm:absolute sm:right-0 lg:top-0 xl:top-36 mb-16 text-right text-xs font-mono uppercase space-y-2" style={{ opacity: 0.8 }}>
-            <div>
-              <a 
-                href="https://www.are.na/sneha-vembu/channels"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accentgray hover:text-slate transition-colors"
-              >
-                Are.na <span className="text-slate">[2]</span>
-              </a>
+    <footer className="footer-sky relative z-0 pb-28 sm:pb-24 px-4 sm:px-4">
+      <div className="footer-sky-bg" aria-hidden="true" />
+      <div className="relative z-10 max-w-7xl mx-auto pt-48 xl:pt-56 2xl:pt-64 3xl:pt-72 sm:pt-28 lg:pt-32">
+        <div className="flex w-full min-h-[16rem] items-start gap-8 lg:gap-16 sm:min-h-[18rem]">
+          {/* Left: geese gif, quote */}
+          <div className="w-full max-w-md min-w-0">
+            <div className="footer-goose-gif" aria-hidden="true">
+              <img
+                src="/media/GIF%20image.gif"
+                alt=""
+                className="footer-goose-gif__image"
+              />
             </div>
-            <div>
-              <button 
-                onClick={handleEmailCopy}
-                className="text-accentgray hover:text-slate transition-colors"
-                title={emailCopied ? "Email copied!" : "Copy email address"}
-              >
-                EMAIL <span className="text-slate">[{emailCopied ? 'COPIED!' : '3'}]</span>
-              </button>
-            </div>
-            <div>
-              <a 
-                href="https://www.linkedin.com/in/sneha-kumar-a06275327/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accentgray hover:text-slate transition-colors"
-              >
-                LINKEDIN <span className="text-slate">[4]</span>
-              </a>
+
+            <div className="mb-10 text-lg text-[#797979] font-medium footer-signature">
+              meanwhile the wild geese, high in the clean blue air, are heading home again...
             </div>
           </div>
 
-          {/* Large cursive signature */}
-           <div 
-            className="text-[80px] sm:text-[120px] md:text-[212px] lg:text-[280px] text-[#898DA0] font-light leading-none md:text-left footer-signature"
-          >
-            sneha kumar
-          </div> 
-        </div>
-
-        {/* Bottom footer text */}
-        <div className="flex flex-row justify-between items-center text-xs font-mono text-accentgray uppercase" style={{ opacity: 0.8 }}>
-          <div className="flex flex-row items-center justify-between gap-40">
-            <div><span className="text-slate"></span> handcoded w ♥︎</div>
-          </div>
-          <div className="text-center sm:text-right">
-            <span>This site is constantly evolving, expect frequent nitpick commits </span>
+          {/* Right: links, kaapi */}
+          <div className="ml-auto flex shrink-0 self-center flex-col items-end gap-6 text-xs font-mono text-accentgray uppercase" style={{ opacity: 0.8 }}>
+            <div className="text-right space-y-2">
+              <div>
+                <a 
+                  href="https://www.are.na/sneha-vembu/channels"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accentgray hover:text-slate transition-colors"
+                >
+                  Are.na <span className="text-slate">[2]</span>
+                </a>
+              </div>
+              <div>
+                <button 
+                  onClick={handleEmailCopy}
+                  className="text-accentgray hover:text-slate transition-colors"
+                  title={emailCopied ? "Email copied!" : "Copy email address"}
+                >
+                  EMAIL <span className="text-slate">[{emailCopied ? 'COPIED!' : '3'}]</span>
+                </button>
+              </div>
+              <div>
+                <a 
+                  href="https://www.linkedin.com/in/sneha-kumar-a06275327/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accentgray hover:text-slate transition-colors"
+                >
+                  LINKEDIN <span className="text-slate">[4]</span>
+                </a>
+              </div>
+            </div>
+            <div className="inline-flex items-center gap-1">
+              <span>made w love & lots of filter kaapi</span>
+              <img
+                src="/media/filter%20kaapi%20icon.svg"
+                alt=""
+                className="footer-kaapi-icon h-[0.9em] w-auto shrink-0"
+                aria-hidden="true"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Miss_Fajardose, Caveat, Hedvig_Letters_Serif } from "next/font/google";
+import { Geist, Geist_Mono, Homemade_Apple, Caveat, Hedvig_Letters_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -69,11 +69,11 @@ const compagnon = localFont({
   preload: false, // Only preload if used above the fold
 });
 
-const missFajardose = Miss_Fajardose({
+const homemadeApple = Homemade_Apple({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-miss-fajardose",
+  variable: "--font-homemade-apple",
   preload: false, // Only used in footer
 });
 
@@ -149,7 +149,7 @@ export default function RootLayout({
         }} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${untitledSans.variable} ${compagnon.variable} ${missFajardose.variable} ${caveat.variable} ${hedvigLettersSerif.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${untitledSans.variable} ${compagnon.variable} ${homemadeApple.variable} ${caveat.variable} ${hedvigLettersSerif.variable} antialiased`}
         suppressHydrationWarning
       >
         <script

@@ -17,6 +17,7 @@ note to self: done is better than perfect!!!
 [ ] music w spotify api? 
 [ ] ocean footer ?  https://codepen.io/dev-kshitiz/pen/zYdMXXa (or sydney skyline)
     [ ] make a wish blowing dandelion https://sylvanlabs.com/ ascii style 
+[ ] acsii geese flying footer
 [ ] feather drag and drop into snehaLM 😳? ew
 
 
