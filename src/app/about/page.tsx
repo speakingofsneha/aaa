@@ -25,7 +25,7 @@ export default function About() {
                 alt="sneha standing in a garden"
                 width={600}
                 height={600}
-                className="object-contain w-full h-auto"
+                className="object-contain w-full h-auto !border-none"
                 priority
               />
             </div>
@@ -35,8 +35,8 @@ export default function About() {
           <div className="flex flex-col justify-center lg:flex-1 order-2 lg:order-2 w-full">
             <div className="text-[#4B4A4A] text-base leading-relaxed text-left">
               <p className="mt-6 mb-6">
-                I&apos;m currently in my senior year at usyd, majoring in interaction design &amp; psychological science.
-                I'm not sure what I am yet- an artist, designer, writer... developer 🤢 ? 
+                I&apos;m currently in my senior year at usyd, majoring in interaction design and psychological science.
+                I'm not sure what I am yet- an artist, designer, writer, developer etc. 
               </p>
 
               <p className="mb-6">
@@ -44,7 +44,7 @@ export default function About() {
               </p>
 
               <p className="mb-6">
-                What sets me apart is my curiosity beyond the world of design; understanding human limitation (cog sci), diving into code, prototyping with LLMs and extensively documenting decisions are a regular part of my process.
+                What sets me apart is my curiosity beyond the world of design. Understanding human limitation (through cognitive science), diving into code, prototyping with LLMs and extensively documenting decisions are a regular part of my process.
               </p>  
 
               {/* 

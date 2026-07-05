@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Homemade_Apple, Caveat, Hedvig_Letters_Serif } from "next/font/google";
 import localFont from "next/font/local";
+import Navbar from "./components/Navbar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -159,6 +160,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <Navbar />
         {children}
       </body>
     </html>

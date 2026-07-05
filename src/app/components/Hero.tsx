@@ -8,7 +8,7 @@ import KolamSketch from './KolamSketch';
 export default function Hero() {
 
   return (
-    <section className="pt-35 sm:pt-45 relative">
+    <section className="pt-40 sm:pt-50 relative">
       <div className="relative" style={{ zIndex: 40 }}>
         <KolamSketch />
       </div>
@@ -17,7 +17,7 @@ export default function Hero() {
         <div className="max-w-[600px] mx-auto text-start mb-16">
           <div className="text-[1rem] leading-relaxed font-detail text-white">
             <p>hello there! I&apos;m sneha.</p>
-            <p className="mt-3">I&apos;m a design engineer drawn to complex, ambigious problems that demand a high bar for craft to (hopefully) change our lives for the better :') ✦</p>
+            <p className="mt-3">I&apos;m a design engineer drawn to complex, ambigious problems that demand a high bar for craft to (hopefully) change our lives for the better  ✦</p>
           </div>
         </div>
         

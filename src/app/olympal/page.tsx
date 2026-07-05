@@ -5,9 +5,7 @@ import CaseStudyTemplate from '../components/case-study/Template';
 import { 
   Body, 
   Emphasis, 
-  Header,
   ImageWithCaption,
-  Callout,
   Link
 } from '../components/case-study/ContentComponents';
 
@@ -47,10 +45,6 @@ export default function OlympalCaseStudy() {
               Athletes struggle to track their performance across multiple metrics and platforms.
               Existing solutions are fragmented and don&apos;t provide a holistic view of progress.
             </Body>
-            <Callout
-              header="We asked"
-              quote="Can we create a unified platform that helps athletes understand their performance holistically?"
-            />
           </>
         )
       },
@@ -63,7 +57,6 @@ export default function OlympalCaseStudy() {
               We built Olympal as a comprehensive performance tracking platform that aggregates data 
               from multiple sources and provides actionable insights
             </Body>
-            <Header level={3}> Key Features</Header>
             <Body>
               The platform includes real-time tracking, historical analysis, and personalized recommendations 
               based on performance patterns.
@@ -91,13 +84,12 @@ export default function OlympalCaseStudy() {
         content: (
           <>
             <Body>
-              Olympal reached <Emphasis>5K users</Emphasis> in its first quarter, 
-              with <Emphasis>78% of users reporting improved performance tracking</Emphasis>.
+              Olympal reached 5K users in its first quarter, 
+              with 78% of users reporting improved performance tracking
             </Body>
             <ImageWithCaption
               src="https://placehold.co/900x600"
               alt="Placeholder"
-              caption="Feedback from Olympal users"
             />
           </>
         )
@@ -109,12 +101,7 @@ export default function OlympalCaseStudy() {
           <>
             <Body>
               Building Olympal taught me the importance of understanding user workflows and creating 
-              seamless integrations between different data sources.
-            </Body>
-            <Body large>
-              <Emphasis>
-                The key was making complex data feel simple and actionable, not overwhelming.
-              </Emphasis>
+              seamless integrations between different data sources. The key was making complex data feel simple and actionable, not overwhelming.
             </Body>
           </>
         )

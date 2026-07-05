@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import { getWorkExperience } from './work';
 
-function WorkCard({ title }: { title: string }) {
-  return (
+function WorkCard({ title, href }: { title: string; href?: string }) {
+  const card = (
     <div
       role="img"
       aria-label={title}
@@ -12,23 +13,25 @@ function WorkCard({ title }: { title: string }) {
       style={{ aspectRatio: '16/9' }}
     />
   );
+
+  if (href) {
+    return (
+      <Link href={href} aria-label={`View ${title} case study`}>
+        {card}
+      </Link>
+    );
+  }
+
+  return (
+    card
+  );
 }
 
 export default function WorkSection() {
-  const [activeCategory, setActiveCategory] = useState('all');
   const workExperience = getWorkExperience();
-  const categories = ['all', 'product', 'frontend', 'misc'];
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
   const currentIdxRef = useRef(0);
-
-  const filteredWork = activeCategory === 'all' 
-    ? workExperience 
-    : workExperience.filter(work => 
-        work.categories.includes(activeCategory as 'product' | 'frontend' | 'misc')
-      );
-
-  // Reset current index when filter changes
-  useEffect(() => { currentIdxRef.current = 0; }, [filteredWork]);
 
   useEffect(() => {
     let isSnapping = false;
@@ -39,32 +42,63 @@ export default function WorkSection() {
     // if high velocity, release the section and let the browser scroll freely.
     let wheelHistory: { t: number; d: number }[] = [];
     let lastBypassTime = 0;
-    const VELOCITY_WINDOW  = 130;  // ms rolling window
-    const VELOCITY_THRESH  = 300;  // accumulated |deltaY| that counts as "fast"
-    const BYPASS_LINGER    = 650;  // ms of free scroll after going fast (momentum tail)
+    const VELOCITY_WINDOW  = 180;  // ms rolling window
+    const VELOCITY_THRESH  = 200;  // accumulated |deltaY| that counts as "fast"
+    const FLICK_THRESH     = 50;   // single wheel event large enough to bypass
+    const BYPASS_LINGER    = 1000; // ms of free scroll after going fast (momentum tail)
+
+    const isFastScroll = (abs: number, now: number) => {
+      if (abs >= FLICK_THRESH) return true;
+
+      wheelHistory.push({ t: now, d: abs });
+      wheelHistory = wheelHistory.filter(v => now - v.t < VELOCITY_WINDOW);
+      const velocity = wheelHistory.reduce((s, v) => s + v.d, 0);
+      return velocity > VELOCITY_THRESH;
+    };
+
+    const isLeavingSection = (idx: number, scrollingDown: boolean, total: number) => {
+      const atFirst = idx === 0;
+      const atLast = idx === total - 1;
+      return (atFirst && !scrollingDown) || (atLast && scrollingDown);
+    };
+
+    const getContentCenterY = (el: HTMLElement) => {
+      const rect = el.getBoundingClientRect();
+      return rect.top + rect.height / 2;
+    };
+
+    const getScrollTopForCenteredContent = (el: HTMLElement) => {
+      const rect = el.getBoundingClientRect();
+      return window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
+    };
 
     const snapToIndex = (idx: number) => {
-      const total = itemRefs.current.length;
+      const total = contentRefs.current.length;
       const clamped = Math.max(0, Math.min(idx, total - 1));
-      const el = itemRefs.current[clamped];
+      const el = contentRefs.current[clamped];
       if (!el) return;
       isSnapping = true;
       currentIdxRef.current = clamped;
-      const top =
-        el.getBoundingClientRect().top + window.scrollY
-        + el.offsetHeight / 2
-        - window.innerHeight / 2;
-      window.scrollTo({ top, behavior: 'smooth' });
-      setTimeout(() => { isSnapping = false; }, 620);
+
+      const targetTop = Math.max(0, getScrollTopForCenteredContent(el));
+      window.scrollTo({ top: targetTop, behavior: 'smooth' });
+
+      // Correct any undershoot after smooth scroll finishes
+      setTimeout(() => {
+        const correction = Math.max(0, getScrollTopForCenteredContent(el));
+        if (Math.abs(getContentCenterY(el) - window.innerHeight / 2) > 2) {
+          window.scrollTo({ top: correction, behavior: 'auto' });
+        }
+        isSnapping = false;
+      }, 680);
     };
 
     const getNearestIdx = () => {
-      const mid = window.scrollY + window.innerHeight / 2;
+      const viewportMid = window.innerHeight / 2;
       let bestIdx = 0, bestDist = Infinity;
-      itemRefs.current.forEach((el, i) => {
+      contentRefs.current.forEach((el, i) => {
         if (!el) return;
-        const elMid = el.getBoundingClientRect().top + window.scrollY + el.offsetHeight / 2;
-        const d = Math.abs(mid - elMid);
+        const d = Math.abs(getContentCenterY(el) - viewportMid);
         if (d < bestDist) { bestDist = d; bestIdx = i; }
       });
       return bestIdx;
@@ -85,14 +119,18 @@ export default function WorkSection() {
       if (abs < 8) return;
 
       const now = Date.now();
+      const total = itemRefs.current.length;
+      currentIdxRef.current = getNearestIdx();
+      const scrollingDown = e.deltaY > 0;
 
-      // Update rolling velocity history
-      wheelHistory.push({ t: now, d: e.deltaY });
-      wheelHistory = wheelHistory.filter(v => now - v.t < VELOCITY_WINDOW);
-      const velocity = wheelHistory.reduce((s, v) => s + Math.abs(v.d), 0);
+      // Never intercept when scrolling out toward hero or footer
+      if (isLeavingSection(currentIdxRef.current, scrollingDown, total)) {
+        lastBypassTime = now;
+        return;
+      }
 
       // Fast scroll → bypass snap, scroll freely through the section
-      if (velocity > VELOCITY_THRESH) {
+      if (isFastScroll(abs, now)) {
         lastBypassTime = now;
         return;
       }
@@ -105,20 +143,16 @@ export default function WorkSection() {
         return;
       }
 
-      currentIdxRef.current = getNearestIdx();
-      const scrollingDown = e.deltaY > 0;
       const next = currentIdxRef.current + (scrollingDown ? 1 : -1);
-      const total = itemRefs.current.length;
 
       // At section boundaries → release so hero/footer scroll freely
       if (next < 0 || next >= total) return;
 
-      // Centre current item first if it's off-centre
-      const nearest = itemRefs.current[currentIdxRef.current];
+      // Centre current work card first if it's off-centre
+      const nearest = contentRefs.current[currentIdxRef.current];
       if (nearest) {
-        const elMid = nearest.getBoundingClientRect().top + nearest.offsetHeight / 2;
-        const offCentre = Math.abs(elMid - window.innerHeight / 2);
-        if (offCentre > window.innerHeight * 0.12) {
+        const offCentre = Math.abs(getContentCenterY(nearest) - window.innerHeight / 2);
+        if (offCentre > window.innerHeight * 0.08) {
           e.preventDefault();
           lastSnapTime = now;
           snapToIndex(currentIdxRef.current);
@@ -143,13 +177,18 @@ export default function WorkSection() {
       const dy = touchStartY - e.changedTouches[0].clientY;
       const elapsed = Date.now() - touchStartTime;
       const speed = Math.abs(dy) / Math.max(elapsed, 1);
-      // Fast swipe (> 1 px/ms) → free scroll
-      if (speed > 1.0 || Math.abs(dy) < 40) return;
       const now = Date.now();
-      if (isSnapping || now - lastSnapTime < COOLDOWN) return;
-      currentIdxRef.current = getNearestIdx();
-      const next = currentIdxRef.current + (dy > 0 ? 1 : -1);
       const total = itemRefs.current.length;
+      currentIdxRef.current = getNearestIdx();
+      const scrollingDown = dy > 0;
+
+      // Fast swipe or exit intent → free scroll
+      if (speed > 0.8 || Math.abs(dy) < 40) return;
+      if (isLeavingSection(currentIdxRef.current, scrollingDown, total)) return;
+      if (now - lastBypassTime < BYPASS_LINGER) return;
+      if (isSnapping || now - lastSnapTime < COOLDOWN) return;
+
+      const next = currentIdxRef.current + (scrollingDown ? 1 : -1);
       if (next < 0 || next >= total) return;
       lastSnapTime = now;
       snapToIndex(next);
@@ -164,39 +203,21 @@ export default function WorkSection() {
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchend', onTouchEnd);
     };
-  }, [filteredWork]);
+  }, []);
 
   return (
     <section id="portfolio-grid" className="relative bg-lightgray">
-
-      {/* Sticky category filter */}
-      <div className="sticky top-0 z-50 flex justify-center gap-1 py-3 px-4 bg-lightgray/85 backdrop-blur-sm">
-        {categories.map((category, i) => (
-          <span key={category} className="flex items-center">
-                <button
-                  onClick={() => setActiveCategory(category)}
-              className={`text-xs font-mono uppercase tracking-widest transition-colors ${
-                activeCategory === category ? 'text-slate' : 'text-accentgray hover:text-slate'
-                  }`}
-                >
-                  {category}
-                </button>
-            {i < categories.length - 1 && (
-              <span className="mx-2 text-accentgray text-xs">·</span>
-            )}
-              </span>
-            ))}
-      </div>
-
       {/* Work items — each is exactly one viewport tall; overflow hidden prevents bleed */}
-      {filteredWork.map((work, idx) => (
+      {workExperience.map((work, idx) => (
         <div
           key={work.id}
           ref={el => { itemRefs.current[idx] = el; }}
           className="flex flex-col items-center justify-center h-screen overflow-hidden px-4"
         >
           <div className="relative z-10 w-full max-w-5xl">
-            <WorkCard title={work.title} />
+            <div ref={el => { contentRefs.current[idx] = el; }}>
+              <WorkCard title={work.title} href={'href' in work ? work.href : undefined} />
+            </div>
             <p className="mt-6 text-sm font-sans text-slate tracking-wide text-center">
               {work.description}
             </p>

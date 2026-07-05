@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import './goose-footer.css';
 
 export default function Footer() {
   const [emailCopied, setEmailCopied] = useState(false);
@@ -37,16 +36,16 @@ export default function Footer() {
           </div>
 
           {/* Right: links, kaapi */}
-          <div className="ml-auto flex shrink-0 self-center flex-col items-end gap-6 text-xs font-mono text-accentgray uppercase" style={{ opacity: 0.8 }}>
+          <div className="ml-auto mt-8 flex shrink-0 self-center flex-col items-end gap-6 text-xs font-mono text-accentgray uppercase sm:mt-15" style={{ opacity: 0.8 }}>
             <div className="text-right space-y-2">
               <div>
                 <a 
-                  href="https://www.are.na/sneha-vembu/channels"
+                  href="https://www.are.na/sneha-kumar/channels"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-accentgray hover:text-slate transition-colors"
                 >
-                  Are.na <span className="text-slate">[2]</span>
+                  Are.na <span className="text-slate">[1]</span>
                 </a>
               </div>
               <div>
@@ -55,7 +54,7 @@ export default function Footer() {
                   className="text-accentgray hover:text-slate transition-colors"
                   title={emailCopied ? "Email copied!" : "Copy email address"}
                 >
-                  EMAIL <span className="text-slate">[{emailCopied ? 'COPIED!' : '3'}]</span>
+                  EMAIL <span className="text-slate">[{emailCopied ? 'COPIED!' : '2'}]</span>
                 </button>
               </div>
               <div>
@@ -65,7 +64,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="text-accentgray hover:text-slate transition-colors"
                 >
-                  LINKEDIN <span className="text-slate">[4]</span>
+                  LINKEDIN <span className="text-slate">[3]</span>
                 </a>
               </div>
             </div>

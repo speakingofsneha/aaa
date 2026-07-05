@@ -145,10 +145,10 @@
    ============================================ */
 
 .header {
-  font-family: var(--font-homemade-apple), cursive;
-  font-size: 1.2rem;
+  font-family: var(--font-untitled-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
   font-weight: 400;
-  color: var(--slate);
+  color: #1A1A1A;
   margin-top: var(--spacing-heading-top);
   margin-bottom: var(--spacing-heading-bottom);
   text-transform: none;
@@ -166,9 +166,9 @@
 }
 
 .body {
-  font-size: 1rem;
+  font-size: 16px;
   line-height: 1.5;
-  color: var(--slate);
+  color: #909090;
   margin-bottom: var(--spacing-paragraph);
 }
 
@@ -177,9 +177,9 @@
 }
 
 .body-large {
-  font-size: 1rem;
+  font-size: 16px;
   line-height: 1.5;
-  color: var(--slate);
+  color: #909090;
   margin-bottom: var(--spacing-xl);
   letter-spacing: -0.02em;
 }
@@ -555,8 +555,19 @@
 }
 
 /* Case study footer overrides */
+.case-study .content-with-sidebar {
+  position: relative;
+  z-index: 1;
+}
+
 .case-study footer {
   background-color: white;
+  position: relative;
+  z-index: 0;
+}
+
+.case-study .footer-sky-bg {
+  z-index: -1;
 }
 
 .case-study footer a {
