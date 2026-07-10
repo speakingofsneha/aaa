@@ -15,7 +15,7 @@ export default function Navbar() {
       <div className="flex w-full justify-end">
         <Link
           href="/about"
-          className="rounded-full bg-[rgba(139,139,150,0.5)] px-6 py-2.5 text-[0.9rem] leading-none text-white backdrop-blur-xl transition-colors hover:bg-[rgba(139,139,150,0.6)]"
+          className="rounded-full bg-[rgba(139,139,150,0.5)] px-6 py-2.5 text-[0.85rem] leading-none text-white backdrop-blur-xl transition-colors hover:bg-[rgba(139,139,150,0.6)]"
         >
           about
         </Link>

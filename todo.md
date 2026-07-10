@@ -29,7 +29,7 @@ bugs:
 feedback: 
 - sunset overlay make darker 
 - change header to untitled serif in case study? 
-fun lil stuff:
+fun lil stuff: 
 [x] rainbow scratchpad 
 [ ] tower of shame; library 
 [ ] chidam as a digital space  

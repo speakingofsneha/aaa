@@ -4,14 +4,22 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { getWorkExperience } from './work';
 
-function WorkCard({ title, href }: { title: string; href?: string }) {
+function WorkCard({ title, href, image }: { title: string; href?: string; image?: string }) {
   const card = (
     <div
       role="img"
       aria-label={title}
       className="relative w-full overflow-hidden rounded-[5px] border border-[rgb(227,227,227)] bg-[#EDEEF2]"
       style={{ aspectRatio: '16/9' }}
-    />
+    >
+      {image && (
+        <img
+          src={image}
+          alt=""
+          className="h-full w-full object-cover !border-none"
+        />
+      )}
+    </div>
   );
 
   if (href) {
@@ -216,7 +224,11 @@ export default function WorkSection() {
         >
           <div className="relative z-10 w-full max-w-5xl">
             <div ref={el => { contentRefs.current[idx] = el; }}>
-              <WorkCard title={work.title} href={'href' in work ? work.href : undefined} />
+              <WorkCard
+                title={work.title}
+                href={'href' in work ? work.href : undefined}
+                image={'image' in work ? work.image : undefined}
+              />
             </div>
             <p className="mt-6 text-sm font-sans text-slate tracking-wide text-center">
               {work.description}

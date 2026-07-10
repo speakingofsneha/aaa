@@ -5,10 +5,11 @@
  */
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Footer from '../Footer';
 import ScreenshotToggle from './ScreenshotToggle';
 import BackButton from './BackButton';
+import CaseStudySidebar from './CaseStudySidebar';
 import './styles.css';
 
 interface CaseStudyConfig {
@@ -59,6 +60,14 @@ interface CaseStudyTemplateProps {
 }
 
 export default function CaseStudyTemplate({ config }: CaseStudyTemplateProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+
+  const navSections = config.sections.map((section, index) => ({
+    id: `section-${index + 1}`,
+    title: section.title,
+  }));
+
   useEffect(() => {
     // Fix html/body overflow to enable sticky positioning
     const style = document.createElement('style');
@@ -102,8 +111,14 @@ export default function CaseStudyTemplate({ config }: CaseStudyTemplateProps) {
         </section>
       )}
 
+      <CaseStudySidebar
+        sections={navSections}
+        contentRef={contentRef}
+        footerRef={footerRef}
+      />
+
       {/* Main Content */}
-      <div className="content-with-sidebar">
+      <div className="content-with-sidebar" ref={contentRef}>
         <div className="main-column">
 
           {/* Project Info */}
@@ -137,9 +152,10 @@ export default function CaseStudyTemplate({ config }: CaseStudyTemplateProps) {
           </section>
 
           {/* Sections */}
-          {config.sections.map((section) => (
+          {config.sections.map((section, index) => (
             <section 
-              key={section.id} 
+              key={`${section.id}-${index}`}
+              id={`section-${index + 1}`}
               className="section" 
               data-section={section.id}
             >
@@ -175,7 +191,9 @@ export default function CaseStudyTemplate({ config }: CaseStudyTemplateProps) {
         </div>
       </div>
 
-      <Footer />
+      <div ref={footerRef}>
+        <Footer />
+      </div>
     </div>
   );
 }

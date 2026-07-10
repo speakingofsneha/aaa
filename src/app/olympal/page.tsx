@@ -21,21 +21,8 @@ export default function OlympalCaseStudy() {
     projectInfo: {
       roles: ['designer', 'developer'],
       timeline: 'jan - mar 2024',
-      link: 'https://olympal.com' // optional
     },
     sections: [
-      {
-        id: 'Context',
-        title: 'Context',
-        content: (
-          <>
-            <Body large>
-              Over four months, we designed and shipped a platform that helps athletes track their performance. 
-              I focused on creating an experience that was intuitive and motivating.
-            </Body>
-          </>
-        )
-      },
       {
         id: 'problem',
         title: 'The Problem',
@@ -79,6 +66,18 @@ export default function OlympalCaseStudy() {
         }
       },
       {
+        id: 'problem',
+        title: 'Research',
+        content: (
+          <>
+            <Body>
+              Athletes struggle to track their performance across multiple metrics and platforms.
+              Existing solutions are fragmented and don&apos;t provide a holistic view of progress.
+            </Body>
+          </>
+        )
+      },
+      {
         id: 'impact',
         title: 'Impact',
         content: (
@@ -88,24 +87,26 @@ export default function OlympalCaseStudy() {
               with 78% of users reporting improved performance tracking
             </Body>
             <ImageWithCaption
-              src="https://placehold.co/900x600"
-              alt="Placeholder"
+              src="/work-images/olympal-impact.webp"
+              alt="Olympal impact"
+              width={900}
+              height={600}
             />
           </>
         )
       },
       {
-        id: 'reflection',
+        id: 'problem',
         title: 'Reflection',
         content: (
           <>
             <Body>
-              Building Olympal taught me the importance of understanding user workflows and creating 
-              seamless integrations between different data sources. The key was making complex data feel simple and actionable, not overwhelming.
+              Athletes struggle to track their performance across multiple metrics and platforms.
+              Existing solutions are fragmented and don&apos;t provide a holistic view of progress.
             </Body>
           </>
         )
-      }
+      },
     ]
   };
 
